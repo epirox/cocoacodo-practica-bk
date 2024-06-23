@@ -1,0 +1,25 @@
+{
+  "name": "mangapoject",
+  "version": "1.0.0",
+  "description": "backend para practica codo-a-codo",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/epirox/cocoacodo-practica-bk.git"
+  },
+  "keywords": [
+    "codoacodo"
+  ],
+  "author": "Alvaro Leandro Garcia Vera",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/epirox/cocoacodo-practica-bk/issues"
+  },
+  "homepage": "https://github.com/epirox/cocoacodo-practica-bk#readme",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
