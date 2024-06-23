@@ -3,14 +3,15 @@ const app = express()
 const port = 3000
 const fs = require('fs')
 const path = require('path')
-
+const bodyParser = require('body-parser');
 
 let users = [
     { id: 1, name: 'John Doe' },
     { id: 2, name: 'Jane Smith' }
 ];
 
-app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
     const filePath = path.join(__dirname, 'tpl', 'index.html');
