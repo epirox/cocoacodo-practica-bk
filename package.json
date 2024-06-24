@@ -21,6 +21,7 @@
   "homepage": "https://github.com/epirox/cocoacodo-practica-bk#readme",
   "dependencies": {
     "body-parser": "^1.20.2",
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "mysql2": "^3.10.1"
   }
 }
