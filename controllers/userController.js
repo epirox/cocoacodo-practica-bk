@@ -1,48 +1,73 @@
-const db = require('../db/db')
+const UsersDaoMysql = require('../db/daos/users.dao.mysqli');
 
+class UserController {
+    constructor() {
+        this.db = new UsersDaoMysql();
+    }
 
-let users = [
-    { id: 1, name: 'John Doe' },
-    { id: 2, name: 'Jane Smith' }
-];
+    getAllUsers = async (req, res) => {
+        try {
+            const users = await this.db.getAllUsers();
+            res.json(users);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
 
-const getAllUsers = (req, res) => {
-    res.json(users);
-};
+    getUserById = async (req, res) => {
+        try {
+            const { id } = req.params;
+            const user = await this.db.getUserById(id);
+            if (!user) {
+                res.status(404).send('User not found');
+            } else {
+                res.json(user);
+            }
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
 
-const getUserById = (req, res) => {
-    const user = users.find(u => u.id === parseInt(req.params.id));
-    if (!user) return res.status(404).send('User not found');
-    res.json(user);
-};
+    createUser = async (req, res) => {
+        try {
+            const { name, age } = req.body;
+            const newUserId = await this.db.createUser(name, age);
+            const newUser = await this.db.getUserById(newUserId);
+            res.status(201).json(newUser);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
 
-const createUser = (req, res) => {
-    const user = {
-        id: users.length + 1,
-        name: req.body.name
-    };
-    users.push(user);
-    res.status(201).json(user);
-};
+    updateUser = async (req, res) => {
+        try {
+            const { id } = req.params;
+            const { name, age } = req.body;
+            const updatedRows = await this.db.updateUser(id, name, age);
+            if (updatedRows === 0) {
+                res.status(404).send('User not found');
+            } else {
+                const updatedUser = await this.db.getUserById(id);
+                res.json(updatedUser);
+            }
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
 
-const updateUser = (req, res) => {
-    const user = users.find(u => u.id === parseInt(req.params.id));
-    if (!user) return res.status(404).send('User not found');
-    user.name = req.body.name;
-    res.json(user);
-};
+    deleteUser = async (req, res) => {
+        try {
+            const { id } = req.params;
+            const deletedRows = await this.db.deleteUser(id);
+            if (deletedRows === 0) {
+                res.status(404).send('User not found');
+            } else {
+                res.status(204).send();
+            }
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+}
 
-const deleteUser = (req, res) => {
-    const userIndex = users.findIndex(u => u.id === parseInt(req.params.id));
-    if (userIndex === -1) return res.status(404).send('User not found');
-    users.splice(userIndex, 1);
-    res.status(204).send();
-};
-
-module.exports = {
-    getAllUsers,
-    getUserById,
-    createUser,
-    updateUser,
-    deleteUser
-};
+module.exports = UserController;
