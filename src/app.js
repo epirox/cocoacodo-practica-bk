@@ -6,7 +6,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 
 // Importa las rutas de usuarios desde userRoutes.js
-const userRoutes = require('./routes/userRoutes');
+const userRoutes = require('../routes/userRoutes');
 
 // Middleware para procesar body de solicitudes
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -14,7 +14,8 @@ app.use(bodyParser.json());
 
 // Ruta de inicio que devuelve un archivo HTML
 app.get('/', (req, res) => {
-    const filePath = path.join(__dirname, 'tpl', 'index.html');
+    console.log(__dirname)
+    const filePath = path.join(__dirname,"..", 'tpl', 'index.html');
 
     fs.readFile(filePath, 'utf8', (err, data) => {
         if (err) {
