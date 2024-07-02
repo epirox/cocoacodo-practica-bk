@@ -1,9 +1,11 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
-const PORT = 3000;
 const fs = require('fs');
 const path = require('path');
 const bodyParser = require('body-parser');
+
+const PORT = process.env.PORT || 3000;
 
 // Importa las rutas de usuarios desde userRoutes.js
 const userRoutes = require('../routes/userRoutes');
