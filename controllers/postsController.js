@@ -1,6 +1,6 @@
-const PostsDaoMysql = require('../db/daos/posts.dao.mysqli');
+import PostsDaoMysql from '../db/daos/posts.dao.mysqli.js';
 
-class PostsController {
+export default class PostsController {
     constructor() {
         this.db = new PostsDaoMysql();
     }
@@ -69,5 +69,3 @@ class PostsController {
         }
     }
 }
-
-module.exports = PostsController;

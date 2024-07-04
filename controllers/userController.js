@@ -1,6 +1,6 @@
-const UsersDaoMysql = require('../db/daos/users.dao.mysqli');
+import UsersDaoMysql from '../db/daos/users.dao.mysqli.js';
 
-class UserController {
+export default class UserController {
     constructor() {
         this.db = new UsersDaoMysql();
     }
@@ -69,5 +69,3 @@ class UserController {
         }
     }
 }
-
-module.exports = UserController;
