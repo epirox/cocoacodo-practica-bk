@@ -4,8 +4,6 @@ import { config } from './auth.config.js'
 function authJWT(req, res, next) {
 
     const token = req.signedCookies.token
-    // const auth = req.cookies.token
-    // console.log(auth)
 
     if (!token) return res
         .status(403)
