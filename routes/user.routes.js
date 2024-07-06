@@ -1,15 +1,28 @@
 import express from 'express'
 const routes = express.Router()
 import UserController from '../controllers/user.controller.js'
+import { middlewares } from '../auth/auth.middlewares.js'
 
 const userController = new UserController()
 
 routes
-    .get('/', userController.getAllUsers)
-    .get('/:id', userController.getUserById)
+    .get('/', 
+        middlewares.authJWT,
+        userController.getAllUsers)
+
+    .get('/:id',
+        middlewares.authJWT,
+        userController.getUserById)
+
     .post('/register', userController.createUser)
     .post('/login', userController.validateUser)
-    .put('/:id', userController.updateUser)
-    .delete('/:id', userController.deleteUser)
+
+    .put('/:id', 
+        middlewares.authJWT,
+        userController.updateUser)
+        
+    .delete('/:id', 
+        middlewares.authJWT,
+        userController.deleteUser)
 
 export default routes

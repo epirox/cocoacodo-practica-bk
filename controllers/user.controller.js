@@ -21,7 +21,7 @@ export default class UserController {
         try {
             const { id } = req.params
 
-            if (!id ) {
+            if (!id) {
                 return res.status(400).json({ error: 'Faltan datos necesarios' });
             }
 
@@ -40,7 +40,7 @@ export default class UserController {
         try {
             const { username } = req.params
 
-            if (!username ) {
+            if (!username) {
                 return res.status(400).json({ error: 'Faltan datos necesarios' });
             }
 
@@ -63,24 +63,34 @@ export default class UserController {
                 return res.status(400).json({ error: 'Faltan datos necesarios' });
             }
 
+            const usernameExists = await this.db.existUserByUsername(username);
+            if (usernameExists) {
+                return res.status(400).json({ error: 'El nombre de usuario ya está en uso' });
+            }
+
+            const emailExists = await this.db.existUserByEmail(email);
+            if (emailExists) {
+                return res.status(400).json({ error: 'El correo electrónico ya está en uso' });
+            }
+
             const hash = bcrypt.hashSync(password, 10)
 
 
             const result = await this.db.createUser(username, hash, email);
             console.log('Resultado de la creación del usuario:', result);
-            
+
             const signature = config.secretKey
             const payload = { id: result, username: username }
             const token = jwt.sign(payload, signature, config.token)
-            
+
             console.log(token)
 
             if (result) {
                 res.status(201)
-                .set('authorization', `Bearer ${token}`)
-                .cookie('token', token, config.cookie)
-                .redirect('/')
-                //.json({ message: 'Usuario creado exitosamente' });
+                    .set('authorization', `Bearer ${token}`)
+                    .cookie('token', token, config.cookie)
+                    //.redirect('/')
+                    .json({ message: 'Usuario creado exitosamente' });
             } else {
                 res.status(500).json({ error: 'No se pudo crear el usuario' });
             }
@@ -93,31 +103,32 @@ export default class UserController {
     validateUser = async (req, res) => {
 
         const { username, password } = req.body
-        if (!username || !password ) {
+        if (!username || !password) {
             return res.status(400).json({ error: 'Faltan datos necesarios' });
         }
         const user = await this.db.getUserByUsername(username)
-    
+
         if (!user) return res
             .status(404)
             .json({ error: true, desc: 'User not Found' })
-    
+
         const isValid = bcrypt.compareSync(password, user.password)
-    
+
         if (!isValid) return res
             .status(404)
             .json({ error: true, desc: 'Invalid password' })
-    
+
         const signature = config.secretKey
         const payload = { id: user.id, username: user.username }
-    
+
         const token = jwt.sign(payload, signature, config.token)
-    
+
         res
             .status(200)
-            //.set('authorization', `Bearer ${token}`)
+            .set('authorization', `Bearer ${token}`)
             .cookie('token', token, config.cookie)
-            .redirect('/')
+            //.redirect('/')
+            .json({ message: 'Usuario logueado exitosamente' });
     }
 
     updateUser = async (req, res) => {

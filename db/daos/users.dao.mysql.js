@@ -16,9 +16,9 @@ class UsersDaoMysql {
         try {
             const query = `CREATE TABLE IF NOT EXISTS ${this.table} (
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                username VARCHAR(100) NOT NULL,
+                username VARCHAR(100) NOT NULL UNIQUE,
                 password VARCHAR(100) NOT NULL,
-                email VARCHAR(100) NOT NULL
+                email VARCHAR(100) NOT NULL UNIQUE
             )`
             await this.mysql.query(query)
             console.log(`Tabla ${this.table} creada o ya existente.`)
@@ -55,9 +55,30 @@ class UsersDaoMysql {
         }
     }
 
+    async getUserByEmail(email) {
+        try {
+            const [results] = await this.mysql.query(`SELECT * FROM ${this.table} WHERE email = ?`, [email])
+            return results[0]
+        } catch (err) {
+            throw err
+        }
+    }
+
+    async existUserByUsername(username) {
+        const query = `SELECT * FROM ${this.table} WHERE username = ?`
+        const [rows] = await this.connection.execute(query, [username])
+        return rows.length > 0
+    }
+
+    async existUserByEmail(email) {
+        const query = `SELECT * FROM ${this.table} WHERE email = ?`
+        const [rows] = await this.connection.execute(query, [email])
+        return rows.length > 0
+    }
+
     async createUser(username, password, email) {
         try {
-            const user = [ username, password, email ]
+            const user = [username, password, email]
             const [result] = await this.mysql.query(`INSERT INTO ${this.table} (username, password, email) VALUES (?, ?, ?)`, user)
             return result.insertId
         } catch (err) {
