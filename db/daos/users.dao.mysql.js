@@ -8,7 +8,7 @@ class UsersDaoMysql {
     async initialize() {
         const mysqlInstance = await Mysql.getInstance()
         this.mysql = mysqlInstance.connection
-        this.table = 'usuarios'
+        this.table = 'user'
         await this.#createTable()
     }
 
@@ -16,11 +16,12 @@ class UsersDaoMysql {
         try {
             const query = `CREATE TABLE IF NOT EXISTS ${this.table} (
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                name VARCHAR(100) NOT NULL,
-                age INT NOT NULL
+                username VARCHAR(100) NOT NULL,
+                password VARCHAR(100) NOT NULL,
+                email VARCHAR(100) NOT NULL
             )`
             await this.mysql.query(query)
-            console.log("Tabla creada o ya existente.")
+            console.log(`Tabla ${this.table} creada o ya existente.`)
         } catch (error) {
             console.error('Error creating table:', error)
             throw error
@@ -45,19 +46,28 @@ class UsersDaoMysql {
         }
     }
 
-    async createUser(name, age) {
+    async getUserByUsername(username) {
         try {
-            const user = { name, age }
-            const [result] = await this.mysql.query(`INSERT INTO ${this.table} SET ?`, user)
+            const [results] = await this.mysql.query(`SELECT * FROM ${this.table} WHERE username = ?`, [username])
+            return results[0]
+        } catch (err) {
+            throw err
+        }
+    }
+
+    async createUser(username, password, email) {
+        try {
+            const user = [ username, password, email ]
+            const [result] = await this.mysql.query(`INSERT INTO ${this.table} (username, password, email) VALUES (?, ?, ?)`, user)
             return result.insertId
         } catch (err) {
             throw err
         }
     }
 
-    async updateUser(id, name, age) {
+    async updateUser(id, username, password) {
         try {
-            const [result] = await this.mysql.query(`UPDATE ${this.table} SET name = ?, age = ? WHERE id = ?`, [name, age, id])
+            const [result] = await this.mysql.query(`UPDATE ${this.table} SET username = ?, password = ?, email = ? WHERE id = ?`, [username, password, email, id])
             return result.affectedRows
         } catch (err) {
             throw err

@@ -1,6 +1,6 @@
 import Mysql from '../mysql.js';
 
-class ContactoDaoMysql {
+class ContactDaoMysql {
     constructor() {
         this.initialize();
     }
@@ -8,7 +8,7 @@ class ContactoDaoMysql {
     async initialize() {
         const mysqlInstance = await Mysql.getInstance();
         this.mysql = mysqlInstance.connection;
-        this.table = 'contacto';
+        this.table = 'contact';
         await this.createTable();
     }
 
@@ -16,21 +16,21 @@ class ContactoDaoMysql {
         try {
             const query = `CREATE TABLE IF NOT EXISTS ${this.table} (
                 id INT PRIMARY KEY AUTO_INCREMENT,
-                nombre VARCHAR(255) NOT NULL,
-                tema VARCHAR(255) NOT NULL,
-                consulta TEXT NOT NULL,
+                name VARCHAR(255) NOT NULL,
+                topic VARCHAR(255) NOT NULL,
+                query TEXT NOT NULL,
                 tyc BOOLEAN NOT NULL,
-                adjunto VARCHAR(255)
+                attachment VARCHAR(255)
             )`;
             await this.mysql.query(query);
-            console.log("Tabla 'contacto' creada o ya existente.");
+            console.log(`Tabla ${this.table} creada o ya existente.`);
         } catch (error) {
             console.error('Error creating table:', error);
             throw error;
         }
     }
 
-    async getAllContactos() {
+    async getAllContacts() {
         try {
             const [results] = await this.mysql.query(`SELECT * FROM ${this.table}`);
             return results;
@@ -39,7 +39,7 @@ class ContactoDaoMysql {
         }
     }
 
-    async getContactoById(id) {
+    async getContactById(id) {
         try {
             const [results] = await this.mysql.query(`SELECT * FROM ${this.table} WHERE id = ?`, [id]);
             return results[0];
@@ -48,10 +48,10 @@ class ContactoDaoMysql {
         }
     }
 
-    async createContacto(nombre, tema, consulta, tyc, adjunto) {
+    async createContact(name, topic, query, tyc, attachment) {
         try {
-            const query = `INSERT INTO ${this.table} (nombre, tema, consulta, tyc, adjunto) VALUES (?, ?, ?, ?, ?)`;
-            const values = [nombre, tema, consulta, tyc, adjunto];
+            const query = `INSERT INTO ${this.table} (name, topic, query, tyc, attachment) VALUES (?, ?, ?, ?, ?)`;
+            const values = [name, topic, query, tyc, attachment];
             const [result] = await this.mysql.query(query, values);
             return result.insertId;
         } catch (err) {
@@ -59,10 +59,10 @@ class ContactoDaoMysql {
         }
     }
 
-    async updateContacto(id, nombre, tema, consulta, tyc, adjunto) {
+    async updateContact(id, name, topic, query, tyc, attachment) {
         try {
-            const query = `UPDATE ${this.table} SET nombre = ?, tema = ?, consulta = ?, tyc = ?, adjunto = ? WHERE id = ?`;
-            const values = [nombre, tema, consulta, tyc, adjunto, id];
+            const query = `UPDATE ${this.table} SET name = ?, topic = ?, query = ?, tyc = ?, attachment = ? WHERE id = ?`;
+            const values = [name, topic, query, tyc, attachment, id];
             const [result] = await this.mysql.query(query, values);
             return result.affectedRows;
         } catch (err) {
@@ -70,7 +70,7 @@ class ContactoDaoMysql {
         }
     }
 
-    async deleteContacto(id) {
+    async deleteContact(id) {
         try {
             const [result] = await this.mysql.query(`DELETE FROM ${this.table} WHERE id = ?`, [id]);
             return result.affectedRows;
@@ -80,4 +80,4 @@ class ContactoDaoMysql {
     }
 }
 
-export default ContactoDaoMysql;
+export default ContactDaoMysql;

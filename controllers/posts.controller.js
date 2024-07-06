@@ -1,4 +1,4 @@
-import PostsDaoMysql from '../db/daos/posts.dao.mysqli.js';
+import PostsDaoMysql from '../db/daos/posts.dao.mysql.js';
 
 export default class PostsController {
     constructor() {

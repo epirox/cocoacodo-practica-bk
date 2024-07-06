@@ -20,11 +20,11 @@ class MangaDaoMysql {
                 title VARCHAR(255) NOT NULL,
                 description TEXT,
                 gen JSON,
-                idusuario INT,
-                FOREIGN KEY (idusuario) REFERENCES usuarios(id)
+                userId INT,
+                FOREIGN KEY (userId) REFERENCES user(id)
             )`;
             await this.mysql.query(query);
-            console.log("Tabla de mangas creada o ya existente.");
+            console.log(`Tabla ${this.table} creada o ya existente.`);
         } catch (error) {
             console.error('Error creating table:', error);
             throw error;
@@ -33,7 +33,7 @@ class MangaDaoMysql {
 
     async getAllMangas() {
         try {
-            const [results] = await this.mysql.query('SELECT * FROM mangas');
+            const [results] = await this.mysql.query(`SELECT * FROM ${this.table}`);
             return results;
         } catch (err) {
             throw err;
@@ -42,17 +42,17 @@ class MangaDaoMysql {
 
     async getMangaById(id) {
         try {
-            const [results] = await this.mysql.query('SELECT * FROM mangas WHERE id = ?', [id]);
+            const [results] = await this.mysql.query(`SELECT * FROM ${this.table}  WHERE id = ?`, [id]);
             return results[0];
         } catch (err) {
             throw err;
         }
     }
 
-    async createManga(src, title, description, gen, idusuario) {
+    async createManga(src, title, description, gen, userId) {
         try {
-            const query = 'INSERT INTO mangas (src, title, description, gen, idusuario) VALUES (?, ?, ?, ?, ?)';
-            const values = [src, title, description, JSON.stringify(gen), idusuario];
+            const query = `INSERT INTO ${this.table}  (src, title, description, gen, userId) VALUES (?, ?, ?, ?, ?)`;
+            const values = [src, title, description, JSON.stringify(gen), userId];
             const [result] = await this.mysql.query(query, values);
             return result.insertId;
         } catch (err) {
@@ -60,10 +60,10 @@ class MangaDaoMysql {
         }
     }
 
-    async updateManga(id, src, title, description, gen, idusuario) {
+    async updateManga(id, src, title, description, gen, userId) {
         try {
-            const query = 'UPDATE mangas SET src = ?, title = ?, description = ?, gen = ?, idusuario = ? WHERE id = ?';
-            const values = [src, title, description, JSON.stringify(gen), idusuario, id];
+            const query = `UPDATE ${this.table}  SET src = ?, title = ?, description = ?, gen = ?, userId = ? WHERE id = ?`;
+            const values = [src, title, description, JSON.stringify(gen), userId, id];
             const [result] = await this.mysql.query(query, values);
             return result.affectedRows;
         } catch (err) {
@@ -73,7 +73,7 @@ class MangaDaoMysql {
 
     async deleteManga(id) {
         try {
-            const [result] = await this.mysql.query('DELETE FROM mangas WHERE id = ?', [id]);
+            const [result] = await this.mysql.query(`DELETE FROM ${this.table}  WHERE id = ?`, [id]);
             return result.affectedRows;
         } catch (err) {
             throw err;

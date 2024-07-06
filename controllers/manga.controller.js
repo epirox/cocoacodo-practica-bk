@@ -6,11 +6,11 @@ class MangaController {
     }
 
     async createManga(req, res) {
-        const { title, description, gen, idusuario} = req.body;
+        const { title, description, gen, userId} = req.body;
         const src = req.file ? req.file.path : null;
 
         try {
-            const newMangaId = await this.mangaDao.createManga(src, title, description, gen, idusuario);
+            const newMangaId = await this.mangaDao.createManga(src, title, description, gen, userId);
             res.status(201).json({ id: newMangaId });
         } catch (error) {
             console.error('Error creando manga:', error);
@@ -46,11 +46,11 @@ class MangaController {
 
     async updateManga(req, res) {
         const { id } = req.params;
-        const { title, description, gen, idusuario } = req.body;
+        const { title, description, gen, userId } = req.body;
         const src = req.file ? req.file.path : null;
 
         try {
-            const affectedRows = await this.mangaDao.updateManga(id, src, title, description, gen, idusuario);
+            const affectedRows = await this.mangaDao.updateManga(id, src, title, description, gen, userId);
             if (affectedRows > 0) {
                 res.status(200).json({ message: 'Manga actualizado' });
             } else {
