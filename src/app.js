@@ -23,11 +23,21 @@ const PORT = process.env.PORT || 3000
 
 
 const allowedOrigins = [
-    /http:\/localhost:*/,
-    /https:\/projectmanga.netlify.app:*/
-]
+    'http://localhost:5500',
+    'https://projectmanga.netlify.app'
+];
 
-app.use(cors({ origin: allowedOrigins }))
+app.use(cors({
+    origin: (origin, callback) => {        
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('No permitido por CORS'));
+        }
+    },
+    credentials: true
+}))
 
 
 app.use(cookieParser(config.secretKey))
