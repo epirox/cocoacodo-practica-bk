@@ -21,8 +21,21 @@ const { urlencoded, json } = bodyParser
 const app = express()
 const PORT = process.env.PORT || 3000
 
-//app.use(cors());
-app.use(cors({ origin: 'https://projectmanga.netlify.app' }));
+/*
+const allowedOrigins = ['http://127.0.0.1:5500','http://localhost', 'https://projectmanga.netlify.app']
+const corsOptions = {
+    origin: function (origin, callback) {
+        if (!origin) return callback(null, true)
+        if (allowedOrigins.indexOf(origin) === -1) {
+            const msg = 'El origen ' + origin + ' no está permitido por la política CORS'
+            return callback(new Error(msg), false)
+        }
+        return callback(null, true)
+    }
+}
+app.use(cors(corsOptions))*/
+
+
 app.use(cookieParser(config.secretKey))
 
 app.use(express.static('tpl'))

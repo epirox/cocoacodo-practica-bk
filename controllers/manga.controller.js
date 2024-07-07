@@ -5,21 +5,6 @@ class MangaController {
         this.mangaDao = new MangaDaoMysql();
     }
 
-    async createManga(req, res) {
-        const { title, description, gen, userId} = req.body;
-        const src = req.file ? req.file.path : null;
-        if (!src ||  !title || !description || !gen || !userId) {
-            return res.status(400).json({ error: 'Faltan datos necesarios' });
-        }
-        try {
-            const newMangaId = await this.mangaDao.createManga(src, title, description, gen, userId);
-            res.status(201).json({ id: newMangaId });
-        } catch (error) {
-            console.error('Error creando manga:', error);
-            res.status(500).json({ error: 'Error creando manga' });
-        }
-    }
-
     async getAllMangas(req, res) {
         try {
             const mangas = await this.mangaDao.getAllMangas();
@@ -46,10 +31,29 @@ class MangaController {
         }
     }
 
+    async createManga(req, res) {
+        const { title, description, gen, userId} = req.body;
+        const src = req.file ? req.file.path : null;
+        if (!src ||  !title || !description || !gen || !userId) {
+            return res.status(400).json({ error: 'Faltan datos necesarios' });
+        }
+        try {
+            const newMangaId = await this.mangaDao.createManga(src, title, description, gen, userId);
+            res.status(201).json({ id: newMangaId });
+        } catch (error) {
+            console.error('Error creando manga:', error);
+            res.status(500).json({ error: 'Error creando manga' });
+        }
+    }
+
     async updateManga(req, res) {
         const { id } = req.params;
         const { title, description, gen, userId } = req.body;
         const src = req.file ? req.file.path : null;
+        
+        if (!src ||  !title || !description || !gen || !userId) {
+            return res.status(400).json({ error: 'Faltan datos necesarios' });
+        }
 
         try {
             const affectedRows = await this.mangaDao.updateManga(id, src, title, description, gen, userId);
