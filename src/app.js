@@ -5,6 +5,7 @@ import express from 'express'
 import { promises as fsPromises } from 'fs'
 import { join } from 'path'
 import bodyParser from 'body-parser'
+import cors from 'cors'
 
 import { config } from '../auth/auth.config.js'
 import cookieParser from 'cookie-parser'
@@ -20,7 +21,8 @@ const { urlencoded, json } = bodyParser
 const app = express()
 const PORT = process.env.PORT || 3000
 
-
+//app.use(cors());
+app.use(cors({ origin: 'https://projectmanga.netlify.app' }));
 app.use(cookieParser(config.secretKey))
 
 app.use(express.static('tpl'))
