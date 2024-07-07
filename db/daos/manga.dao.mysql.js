@@ -6,8 +6,7 @@ class MangaDaoMysql {
     }
 
     async initialize() {
-        const mysqlInstance = await Mysql.getInstance();
-        this.mysql = mysqlInstance.connection;
+        this.mysql = await Mysql.getInstance();
         this.table = 'mangas';
         await this.createTable();
     }
@@ -32,18 +31,23 @@ class MangaDaoMysql {
     }
 
     async getAllMangas() {
-        try {
-            const [results] = await this.mysql.query(`SELECT * FROM ${this.table}`);
-            return results;
+        try {           
+            const [result] = await this.mysql.query(`SELECT * FROM ${this.table}`);
+            return result;
         } catch (err) {
+            console.error('Error in getAllMangas DAO method:', {
+                message: err.message,
+                stack: err.stack,
+                code: err.code
+            });
             throw err;
         }
     }
 
     async getMangaById(id) {
         try {
-            const [results] = await this.mysql.query(`SELECT * FROM ${this.table}  WHERE id = ?`, [id]);
-            return results[0];
+            const [result] = await this.mysql.query(`SELECT * FROM ${this.table}  WHERE id = ?`, [id]);
+            return result[0];
         } catch (err) {
             throw err;
         }
@@ -73,6 +77,7 @@ class MangaDaoMysql {
 
     async deleteManga(id) {
         try {
+            const mysql = await this.mysql;
             const [result] = await this.mysql.query(`DELETE FROM ${this.table}  WHERE id = ?`, [id]);
             return result.affectedRows;
         } catch (err) {

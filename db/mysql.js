@@ -35,6 +35,31 @@ class Mysql {
         }
     }
 
+    async query(sql, params) {        
+        if (!this.isConnected()) {
+            this.initialize();
+        }
+        await this.initialized;
+
+        try {
+            const results = await this.connection.execute(sql, params);
+            return results;
+        } catch (error) {
+            console.error('Query error:', error);
+            throw error;
+        }
+    }
+
+    isConnected() {
+        return this.connection && this.connection.connection._closing === false;
+    }
+
+    async close() {
+        if (this.connection) {
+            await this.connection.end();
+        }
+    }
+
     static async getInstance() {
         if (!Mysql.instance) {
             Mysql.instance = new Mysql();
